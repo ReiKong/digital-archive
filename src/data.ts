@@ -6,6 +6,8 @@ export type ArchiveItem = {
   place: string;
   note: string;
   image: string;
+  images?: string[];
+  tags?: string[];
   x: number;
   y: number;
   width: number;
@@ -13,6 +15,7 @@ export type ArchiveItem = {
   z: number;
 };
 
+// All artwork is stored locally in public/images, so the demo works without a photo API.
 const entries: Omit<ArchiveItem, 'image'>[] = [
   { id:'01',title:'A ticket from another night',category:'EPHEMERA',year:'2024',place:'Montréal, QC',note:'A small piece of paper that somehow remembers more than I do. I kept it in the back of a book.',x:90,y:135,width:132,rotation:-6,z:2 },
   { id:'02',title:'Almost-summer postcard',category:'POSTCARDS',year:'2023',place:'New York, NY',note:'Found in a little shop on an afternoon I had nowhere in particular to be.',x:275,y:78,width:169,rotation:4,z:1 },
@@ -39,4 +42,16 @@ const entries: Omit<ArchiveItem, 'image'>[] = [
   { id:'23',title:'Dried wildflowers',category:'BOTANICALS',year:'2024',place:'Montréal, QC',note:'A very small bouquet for a very ordinary day.',x:1960,y:886,width:128,rotation:3,z:3 },
   { id:'24',title:'Cinema stub',category:'EPHEMERA',year:'2023',place:'Toronto, ON',note:'An evening worth keeping a piece of.',x:2350,y:707,width:150,rotation:-4,z:2 }
 ];
-export const INITIAL_ITEMS: ArchiveItem[] = entries.map((entry, index) => ({ ...entry, image: `/images/${String(index + 1).padStart(2, '0')}.svg` }));
+export const INITIAL_ITEMS: ArchiveItem[] = entries.map((entry, index) => {
+  const number = String(index + 1).padStart(2, '0');
+  return {
+    ...entry,
+    image: `/images/${number}.svg`,
+    images: [
+      `/images/${number}.svg`,
+      `/images/${number}-detail-2.svg`,
+      `/images/${number}-detail-3.svg`
+    ],
+    tags: [entry.category.toLowerCase(), entry.place.split(',')[0].toLowerCase()]
+  };
+});

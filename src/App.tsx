@@ -1,7 +1,6 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  ArrowDownRight,
   ArrowLeft,
   ArrowRight,
   Crosshair,
@@ -78,7 +77,6 @@ export default function App() {
 
   const viewportRef = useRef<HTMLDivElement>(null);
   const actionRef = useRef<Action | null>(null);
-  const itemsRef = useRef(items);
   const camRef = useRef(camera);
   const topZ = useRef(Math.max(...INITIAL_ITEMS.map(i => i.z)));
 
@@ -87,7 +85,6 @@ export default function App() {
   const selected = items.find(i => i.id === selectedId);
   const selectedIndex = items.findIndex(i => i.id === selectedId);
 
-  itemsRef.current = items;
   camRef.current = camera;
 
   useEffect(() => {
@@ -348,49 +345,22 @@ export default function App() {
     });
   };
 
-  const selectionScreen = selected
-    ? {
-        x:
-          camera.x +
-          (selected.x + selected.width / 2) * camera.scale,
-        y:
-          camera.y +
-          (selected.y + selected.width * 0.63) * camera.scale
-      }
-    : null;
-
   const next = (step: number) =>
     setSelectedId(
-      items[
-        (selectedIndex + step + items.length) % items.length
-      ]?.id ?? null
+      items[(selectedIndex + step + items.length) % items.length]?.id ?? null
     );
 
-  const vw =
-    typeof window === 'undefined' ? 1280 : window.innerWidth;
+  const gallery = selected?.images?.length
+    ? selected.images
+    : selected
+      ? [selected.image]
+      : [];
 
-  const vh =
-    typeof window === 'undefined' ? 800 : window.innerHeight;
-
-  const floatingWidth = Math.min(860, vw - 70);
-
-  const floatingLeft = selectionScreen
-    ? clamp(
-        selectionScreen.x + floatingWidth + 32 < vw - 26
-          ? selectionScreen.x + 32
-          : selectionScreen.x - floatingWidth - 32,
-        25,
-        Math.max(25, vw - floatingWidth - 25)
-      )
-    : 25;
-
-  const floatingTop = selectionScreen
-    ? clamp(
-        selectionScreen.y - 170,
-        36,
-        Math.max(36, vh - 470)
-      )
-    : 36;
+  const tags = selected?.tags?.length
+    ? selected.tags
+    : selected
+      ? [selected.category.toLowerCase()]
+      : [];
 
   return (
     <div className="app">
@@ -486,95 +456,69 @@ export default function App() {
         </div>
       </footer>
 
-      {selected && selectionScreen && (
+      {selected && (
         <div
           className="detail-layer"
           role="dialog"
           aria-modal="true"
           aria-label={selected.title}
+          key={selected.id}
         >
           <div
             className="detail-backdrop"
             onClick={() => setSelectedId(null)}
           />
 
-          <div
-            className="detail-card"
-            style={
-              {
-                '--float-left': `${floatingLeft}px`,
-                '--float-top': `${floatingTop}px`
-              } as React.CSSProperties
-            }
+          <button
+            className="close-detail"
+            onClick={() => setSelectedId(null)}
+            aria-label="Close detail"
           >
-            <div className="detail-photo-wrap">
-              <div className="detail-photo">
-                <img
-                  src={selected.image}
-                  alt={selected.title}
-                />
-              </div>
+            <X size={22} strokeWidth={1.4} />
+          </button>
+
+          <div className="detail-layout">
+            <div className="detail-gallery" tabIndex={0} aria-label={`Images of ${selected.title}`}>
+              {gallery.map((image, index) => (
+                <figure className="detail-gallery-image" key={`${selected.id}-${index}`}>
+                  <img
+                    src={image}
+                    alt={`${selected.title} — image ${index + 1} of ${gallery.length}`}
+                  />
+                  <figcaption>
+                    {String(index + 1).padStart(2, '0')} / {String(gallery.length).padStart(2, '0')}
+                  </figcaption>
+                </figure>
+              ))}
             </div>
 
-            <div className="detail-text">
-              <div className="detail-topline">
-                <button
-                  onClick={() => setSelectedId(null)}
-                  className="close-detail"
-                  aria-label="Close detail"
-                >
-                  <X size={21} strokeWidth={1.4} />
-                </button>
-              </div>
-
-              <span className="detail-category">
-                {selected.category} <span>↗</span>
-              </span>
-
+            <aside className="detail-text">
               <h1>{selected.title}</h1>
 
               <div className="detail-location">
-                {selected.place}
-                {' '}
-                <span className="detail-bullet">·</span>
-                {' '}
-                {selected.year}
+                {selected.place} <span className="detail-bullet">·</span> {selected.year}
               </div>
-
-              <div className="detail-line" />
 
               <p>{selected.note}</p>
 
-              <div className="detail-bottom">
-                <div className="detail-nav">
-                  <button
-                    onClick={() => next(-1)}
-                    aria-label="Previous object"
-                  >
-                    <ArrowLeft size={18} />
-                  </button>
-
-                  <span>
-                    {(selectedIndex + 1)
-                      .toString()
-                      .padStart(2, '0')}{' '}
-                    /{' '}
-                    {items.length.toString().padStart(2, '0')}
-                  </span>
-
-                  <button
-                    onClick={() => next(1)}
-                    aria-label="Next object"
-                  >
-                    <ArrowRight size={18} />
-                  </button>
-                </div>
+              <div className="detail-tags">
+                {tags.map(tag => (
+                  <span key={tag} className="detail-tag">{tag}</span>
+                ))}
               </div>
-            </div>
-          </div>
 
-          <div className="esc-hint">
-            PRESS ESC TO RETURN TO THE ARCHIVE
+              <div className="detail-nav">
+                <button onClick={() => next(-1)} aria-label="Previous object">
+                  <ArrowLeft size={18} />
+                </button>
+                <span>
+                  {(selectedIndex + 1).toString().padStart(2, '0')} / {items.length.toString().padStart(2, '0')}
+                </span>
+                <button onClick={() => next(1)} aria-label="Next object">
+                  <ArrowRight size={18} />
+                </button>
+              </div>
+            </aside>
           </div>
         </div>
       )}
