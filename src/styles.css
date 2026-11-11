@@ -1,0 +1,637 @@
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap');
+
+/* ========================================
+   Global Styles
+======================================== */
+
+:root {
+  font-family: 'DM Sans', Arial, sans-serif;
+  color: #302d2a;
+  background: #f7f6f3;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+button {
+  font: inherit;
+}
+
+button:focus-visible {
+  outline: 2px solid #917657;
+  outline-offset: 4px;
+}
+
+/* ========================================
+   App Layout
+======================================== */
+
+.app {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #f7f6f3;
+  isolation: isolate;
+}
+
+/* ========================================
+   Header / Navigation
+======================================== */
+
+.topbar {
+  position: absolute;
+  z-index: 15;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 clamp(24px, 5.3vw, 86px);
+  pointer-events: none;
+}
+
+.brand,
+.header-right {
+  display: flex;
+  align-items: center;
+  pointer-events: auto;
+}
+
+.brand {
+  gap: 15px;
+}
+
+.brand-emblem {
+  font-size: 30px;
+  color: #8e5e47;
+  line-height: 1;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.brand-text strong {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: -0.4px;
+}
+
+.brand-text .dot {
+  color: #ac785e;
+}
+
+.brand-text > span {
+  color: #8f8981;
+  font-size: 10px;
+  letter-spacing: 0.35px;
+}
+
+.header-right {
+  gap: 26px;
+}
+
+.header-count {
+  font-size: 10px;
+  color: #999189;
+  letter-spacing: 1.4px;
+}
+
+.header-count strong {
+  color: #554b43;
+  font-weight: 700;
+}
+
+.about-button {
+  border: 1px solid #cfcac2;
+  background: transparent;
+  border-radius: 100%;
+  height: 27px;
+  width: 27px;
+  cursor: pointer;
+  color: #766f65;
+  font-size: 13px;
+}
+
+/* ========================================
+   Archive Canvas / Viewport
+======================================== */
+
+.viewport {
+  position: absolute;
+  inset: 0;
+  touch-action: none;
+  overflow: hidden;
+  cursor: grab;
+  transition:
+    filter 0.35s ease,
+    transform 0.35s ease;
+}
+
+.viewport:active {
+  cursor: grabbing;
+}
+
+.viewport-selected {
+  filter: blur(13px) saturate(0.72);
+  transform: scale(1.018);
+  pointer-events: none;
+}
+
+.world {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+
+.is-ready .world {
+  opacity: 1;
+}
+
+/* ========================================
+   Archive Items
+======================================== */
+
+.archive-item {
+  position: absolute;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  display: block;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  transition:
+    filter 0.22s ease,
+    box-shadow 0.22s ease;
+  filter: drop-shadow(0 9px 9px rgba(62, 48, 35, 0.075));
+}
+
+.archive-item:hover {
+  filter: drop-shadow(0 12px 13px rgba(62, 48, 35, 0.22));
+  z-index: 1000 !important;
+}
+
+.archive-item:active {
+  cursor: grabbing;
+}
+
+.archive-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+  pointer-events: none;
+}
+
+/* ========================================
+   Canvas Vignette
+======================================== */
+
+.canvas-vignette {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 82% 82% at 49% 54%,
+    transparent 55%,
+    rgba(238, 233, 225, 0.30) 100%
+  );
+}
+
+/* ========================================
+   Footer / Zoom Controls
+======================================== */
+
+.footer {
+  position: absolute;
+  z-index: 15;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 83px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 clamp(24px, 5.3vw, 86px);
+  pointer-events: none;
+}
+
+.footer-help,
+.zoom-control {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+}
+
+.footer-help {
+  gap: 11px;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: #998f86;
+}
+
+.footer-help i {
+  font-style: normal;
+  padding: 0 6px;
+  color: #b7ada3;
+}
+
+.zoom-control {
+  gap: 13px;
+  color: #71685e;
+}
+
+.zoom-control button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  padding: 4px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.zoom-control button:hover {
+  color: #a46f54;
+}
+
+.zoom-control > span:not(.zoom-divider) {
+  font-size: 10px;
+  min-width: 37px;
+  text-align: center;
+}
+
+.zoom-divider {
+  height: 21px;
+  width: 1px;
+  background: #d7d1c8;
+  margin: 0 4px;
+}
+
+/* ========================================
+   Detail Overlay
+======================================== */
+
+.detail-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  padding: 35px 30px;
+}
+
+.detail-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(243, 240, 234, 0.47);
+  cursor: zoom-out;
+}
+
+/* ========================================
+   Floating Detail Card
+======================================== */
+
+.detail-card {
+  position: absolute;
+  left: var(--float-left);
+  top: var(--float-top);
+  z-index: 1;
+  width: min(860px, calc(100vw - 70px));
+  min-height: 420px;
+  background: rgba(252, 251, 249, 0.97);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  box-shadow:
+    0 25px 95px rgba(54, 44, 33, 0.16),
+    0 1px 5px rgba(54, 44, 33, 0.07);
+  border: 1px solid rgba(219, 213, 205, 0.65);
+  animation: float-up 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes float-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ========================================
+   Detail Image
+======================================== */
+
+.detail-photo-wrap {
+  min-height: 420px;
+  background: #efede8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 32px;
+}
+
+.detail-photo {
+  height: 315px;
+  max-width: 96%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 12px 18px rgba(68, 56, 43, 0.12));
+}
+
+.detail-photo img {
+  height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.photo-number {
+  position: absolute;
+  left: 27px;
+  bottom: 22px;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: #9a9288;
+}
+
+/* ========================================
+   Detail Information
+======================================== */
+
+.detail-text {
+  padding: 34px 41px 29px 40px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.detail-topline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 9px;
+  letter-spacing: 1.15px;
+  color: #a39a8e;
+}
+
+.close-detail {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  color: #544c44;
+  padding: 0;
+}
+
+.detail-category {
+  font-size: 10px;
+  color: #9f755c;
+  letter-spacing: 1.3px;
+  margin-top: 63px;
+}
+
+.detail-category span {
+  font-size: 12px;
+  padding-left: 5px;
+}
+
+.detail-text h1 {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: clamp(29px, 3.3vw, 43px);
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -0.7px;
+  margin: 13px 0 16px;
+}
+
+.detail-location {
+  font-size: 12px;
+  color: #827b70;
+}
+
+.detail-bullet {
+  padding: 0 8px;
+}
+
+.detail-line {
+  width: 34px;
+  height: 1px;
+  background: #b2a599;
+  margin: 29px 0 20px;
+}
+
+.detail-text p {
+  font-size: 13px;
+  line-height: 1.9;
+  color: #6f685e;
+  max-width: 290px;
+  margin: 0;
+}
+
+/* ========================================
+   Detail Footer / Navigation
+======================================== */
+
+.detail-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 26px;
+}
+
+.detail-bottom > span {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: #9b9084;
+}
+
+.detail-nav {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.detail-nav button {
+  border: 0;
+  background: none;
+  color: #5b5148;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.detail-nav > span {
+  font-size: 10px;
+  white-space: nowrap;
+  color: #8e857a;
+}
+
+.esc-hint {
+  position: absolute;
+  z-index: 1;
+  bottom: 26px;
+  font-size: 9px;
+  letter-spacing: 1.8px;
+  color: #8e857c;
+  pointer-events: none;
+}
+
+/* ========================================
+   Responsive / Mobile
+======================================== */
+
+@media (max-width: 700px) {
+  /* Header */
+
+  .topbar {
+    height: 87px;
+  }
+
+  .brand-text strong {
+    font-size: 19px;
+  }
+
+  .brand-text > span {
+    font-size: 9px;
+  }
+
+  .brand-emblem {
+    font-size: 24px;
+  }
+
+  .header-count {
+    display: none;
+  }
+
+  /* Footer */
+
+  .footer {
+    height: 80px;
+    align-items: end;
+    padding-bottom: 24px;
+  }
+
+  .footer-help {
+    font-size: 8px;
+    line-height: 1.6;
+    max-width: 195px;
+  }
+
+  .footer-help span {
+    max-width: 160px;
+  }
+
+  .footer-help i {
+    padding: 0 2px;
+  }
+
+  .zoom-control {
+    gap: 5px;
+  }
+
+  .zoom-control button:nth-last-child(1) {
+    display: none;
+  }
+
+  /* Detail Overlay */
+
+  .detail-layer {
+    padding: 25px 20px;
+  }
+
+  .detail-card {
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    animation: none;
+    width: min(440px, calc(100vw - 40px));
+    max-height: calc(100vh - 105px);
+    min-height: 0;
+    overflow: auto;
+    grid-template-columns: 1fr;
+  }
+
+  /* Detail Image */
+
+  .detail-photo-wrap {
+    min-height: 230px;
+    padding: 20px;
+  }
+
+  .detail-photo {
+    height: 190px;
+  }
+
+  /* Detail Information */
+
+  .detail-text {
+    padding: 24px 27px 26px;
+  }
+
+  .detail-category {
+    margin-top: 25px;
+  }
+
+  .detail-text h1 {
+    font-size: 32px;
+  }
+
+  .detail-line {
+    margin: 19px 0 14px;
+  }
+
+  .detail-bottom {
+    padding-top: 25px;
+  }
+
+  .esc-hint {
+    bottom: 12px;
+    font-size: 8px;
+  }
+}
+
+/* ========================================
+   Accessibility / Reduced Motion
+======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
